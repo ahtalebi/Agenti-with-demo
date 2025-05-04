@@ -213,13 +213,13 @@ async def get_documents():
             title = os.path.splitext(file_name)[0].replace("_", " ").title()
             
             # Generate a simple description based on the title
-            description = f"{title} document for reference."
+            # description = f"{title} document for reference."
             
             document = {
                 "id": file_id,
                 "title": title,
                 "filename": file_name,
-                "description": description,
+                "description": '',
                 "size": size_str,
                 "type": file_type
             }

@@ -152,6 +152,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+
+        
+
     // Function to check for first-time user and add welcome message to chat
     async function checkFirstTimeUserAndAddMessage() {
         try {
@@ -172,6 +175,12 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const countData = await countResponse.json();
             console.log('[checkFirstTimeUserAndAddMessage] Interaction count data:', countData);
+            
+            // Check if user has reached limit
+            if (countData.count >= 5) {
+                console.log('[checkFirstTimeUserAndAddMessage] User has reached interaction limit');
+                return; // Don't add welcome message for expired users
+            }
             
             // Get customer info
             console.log('[checkFirstTimeUserAndAddMessage] Fetching customer info');
@@ -277,6 +286,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+
+
+
+
+
     // Function to ask a question
     async function askQuestion() {
         const question = questionInput.value.trim();
@@ -349,7 +363,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Check limit again after the interaction is recorded
             if (token) {
                 console.log('[askQuestion] Checking interaction limit after response');
-                setTimeout(() => checkInteractionLimit(token), 500); // Small delay to ensure interaction is recorded
+                setTimeout(() => checkInteractionLimit(token), 3000); // Small delay to ensure interaction is recorded
             }
         } catch (error) {
             console.error('[askQuestion] Error:', error);
@@ -361,6 +375,18 @@ document.addEventListener('DOMContentLoaded', function() {
             addMessage(`I'm sorry, I encountered an error: ${error.message || 'Unknown error occurred'}. Please try again.`, false);
         }
     }
+    
+
+
+
+
+
+
+
+
+
+
+
     
     // Event listener for the ask button
     askButton.addEventListener('click', function() {

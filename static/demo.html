@@ -45,7 +45,7 @@
             color: var(--light-text);
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-start;
         }
         
         .logo-container {
@@ -67,12 +67,14 @@
             margin: 0;
             font-size: 1.6rem;
             font-weight: 600;
+            text-align: center;
         }
         
         .header-subtitle {
             margin: 5px 0 0;
             font-size: 0.9rem;
             opacity: 0.9;
+            text-align: center;
         }
         
         .chat-container {
@@ -232,8 +234,8 @@
         /* Knowledge Base Documents Section */
         .knowledge-base {
             padding: 30px;
-            background: linear-gradient(135deg, #f0f4f8 0%, #e1f5fe 100%);
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            background: linear-gradient(135deg, #f8faff 0%, #e8f4fd 100%);
+            border-top: 1px solid rgba(58, 123, 213, 0.1);
         }
         
         .knowledge-base h2 {
@@ -262,18 +264,20 @@
         }
         
         .document-card {
-            background-color: white;
+            background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
             border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 6px 20px rgba(58, 123, 213, 0.08);
             transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
+            border: 1px solid rgba(58, 123, 213, 0.1);
         }
-        
+
         .document-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 12px 35px rgba(58, 123, 213, 0.15);
+            border-color: rgba(58, 123, 213, 0.2);
         }
         
         .document-icon {
@@ -286,7 +290,7 @@
         .document-title {
             font-weight: 600;
             margin-bottom: 10px;
-            color: var(--dark-text);
+            color: #2b5797;
             font-size: 1.1rem;
         }
         
@@ -310,7 +314,7 @@
         }
         
         .download-button {
-            background-color: var(--primary-color);
+            background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
             color: white;
             border: none;
             padding: 8px 15px;
@@ -321,20 +325,18 @@
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
+            box-shadow: 0 4px 10px rgba(58, 123, 213, 0.2);
         }
-        
+
         .download-button:hover {
-            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(58, 123, 213, 0.3);
         }
-        
-        .download-button i {
-            margin-right: 5px;
-        }
-        
+
         .view-button {
-            background-color: #f0f4f8;
-            color: var(--dark-text);
-            border: none;
+            background-color: rgba(58, 123, 213, 0.05);
+            color: #3a7bd5;
+            border: 1px solid rgba(58, 123, 213, 0.1);
             padding: 8px 15px;
             border-radius: 20px;
             display: flex;
@@ -344,9 +346,10 @@
             transition: all 0.3s ease;
             text-decoration: none;
         }
-        
+
         .view-button:hover {
-            background-color: #e1e7f0;
+            background-color: rgba(58, 123, 213, 0.1);
+            border-color: rgba(58, 123, 213, 0.2);
         }
         
         .view-button i {
@@ -640,12 +643,18 @@
         <div class="popup-content">
             <span class="close-popup">&times;</span>
             <h2 class="welcome-title">Welcome, <span id="welcome-user-name">User</span>!</h2>
-            <p class="welcome-text">Thank you for trying our AI Assistant demo. I'm here to help answer any questions you might have about the documents..</p>
-            
+
+
+
+            <p class="welcome-text">Thank you for trying our AI Assistant demo. I can help answer questions about <span id="document-names" style="font-weight: bold;">your documents</span>.</p>
+
             <div class="welcome-highlight">
-                <p>Try asking me about ?!</p>
+                <p>These documents could be the unique documents from your business, tailored specifically for you!</p>
+                <p>Try asking me anything about <span id="document-examples">these materials</span>!</p>
             </div>
             
+
+
             <button class="welcome-button" id="start-chatting">Start Chatting</button>
         </div>
     </div>
@@ -749,21 +758,70 @@
                     addMessage("You've reached the maximum number of interactions for this demo. Please contact our sales team for a full version with unlimited interactions.", false);
                 }
             }
-            
+                        
+                        
             if (token) {
-                // Fetch user info for this token
-                fetch(`/api/token/info?token=${token}`)
+                // First check if user has reached interaction limit
+                fetch(`/api/interactions/count?token=${token}`)
+                    .then(response => response.json())
+                    .then(countData => {
+                        if (countData.count >= 5) {
+                            // User has reached limit, don't show welcome popup
+                            console.log("User has reached interaction limit - skipping welcome popup");
+                            return;
+                        }
+                        
+                        // User hasn't reached limit, proceed with welcome popup
+                        return fetch(`/api/token/info?token=${token}`);
+                    })
                     .then(response => {
+                        if (!response) return; // User reached limit, response is undefined
                         if (!response.ok) {
                             throw new Error('Failed to fetch user info');
                         }
                         return response.json();
                     })
                     .then(data => {
-                        console.log("Received user data:", data); // Debug log
+                        if (!data) return; // User reached limit
+                        
+                        console.log("Received user data:", data);
                         
                         if (data.customer_name) {
                             document.getElementById('welcome-user-name').textContent = data.customer_name;
+                            
+                            // Fetch documents to include in welcome message
+                            fetch('/api/documents')
+                                .then(response => response.json())
+                                .then(docData => {
+                                    const documents = docData.documents;
+                                    let documentText = '';
+                                    let documentExamples = '';
+                                    
+                                    if (documents.length > 0) {
+                                        if (documents.length === 1) {
+                                            documentText = `the ${documents[0].title}`;
+                                            documentExamples = `${documents[0].title}`;
+                                        } else if (documents.length === 2) {
+                                            documentText = `the ${documents[0].title} and ${documents[1].title}`;
+                                            documentExamples = `${documents[0].title} or ${documents[1].title}`;
+                                        } else if (documents.length === 3) {
+                                            documentText = `the ${documents[0].title}, ${documents[1].title}, and ${documents[2].title}`;
+                                            documentExamples = `${documents[0].title}, ${documents[1].title}, or ${documents[2].title}`;
+                                        } else {
+                                            documentText = `${documents.length} documents including ${documents[0].title}, ${documents[1].title}, and ${documents[2].title}`;
+                                            documentExamples = `${documents[0].title}, ${documents[1].title}, or any of the other documents`;
+                                        }
+                                        
+                                        document.getElementById('document-names').textContent = documentText;
+                                        document.getElementById('document-examples').textContent = documentExamples;
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching documents for welcome message:', error);
+                                    // Use default text if can't fetch documents
+                                    document.getElementById('document-names').textContent = 'your business documents';
+                                    document.getElementById('document-examples').textContent = 'your materials';
+                                });
                             
                             // Show popup
                             const popup = document.getElementById('welcome-popup');
@@ -800,7 +858,11 @@
             } else {
                 console.log("No token found in URL");
             }
-            
+                        
+
+
+
+
             // Close document modal when clicking the X
             const closeModalBtn = document.querySelector('.close-modal');
             closeModalBtn.onclick = function() {

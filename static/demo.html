@@ -31,7 +31,7 @@
         }
         
         .container {
-            max-width: 900px;
+            max-width: 2000px;
             margin: 40px auto;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             border-radius: 16px;
@@ -81,7 +81,7 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            height: 500px;
+            height: 700px;
         }
         
         .messages {
@@ -1068,9 +1068,6 @@
                                             else if (doc.type === 'word') iconClass = 'fas fa-file-word';
                                             
                                             docCard.innerHTML = `
-                                                <div class="document-icon">
-                                                    <i class="${iconClass}"></i>
-                                                </div>
                                                 <div class="document-title">${doc.title}</div>
                                                 <div class="document-description">${doc.description}</div>
                                                 <div class="document-size">${doc.size}</div>

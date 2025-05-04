@@ -622,10 +622,12 @@
         </div>
         
         <!-- Knowledge Base Documents Section - Restored -->
+         
         <div class="knowledge-base">
-            <h2>Knowledge Documents</h2>
+        <!---    <h2>Knowledge Documents</h2> -->
             <p class="knowledge-base-description">
-                You can explore or download the documents used by the AI assistant to provide answers.
+               <!-- You can explore or download the documents used by the AI assistant to provide answers. -->
+                Discover the documents behind the AI's answers.
             </p>
             
             <div class="documents-grid" id="documents-container">
@@ -638,27 +640,38 @@
         </div>
     </div>
     
+
+
+
+
+
+
+
+    <!-- Welcome Popup -->
     <!-- Welcome Popup -->
     <div id="welcome-popup" class="popup">
         <div class="popup-content">
             <span class="close-popup">&times;</span>
             <h2 class="welcome-title">Welcome, <span id="welcome-user-name">User</span>!</h2>
 
-
-
-            <p class="welcome-text">Thank you for trying our AI Assistant demo. I can help answer questions about <span id="document-names" style="font-weight: bold;">your documents</span>.</p>
+            <p class="welcome-text">
+                Thank you for trying our AI Assistant demo.<br> 
+            </p>
 
             <div class="welcome-highlight">
-                <p>These documents could be the unique documents from your business, tailored specifically for you!</p>
+                <p>These documents could be the unique documents from <span style="font-weight: bold;">your business</span>, tailored specifically for you!</p>
                 <p>Try asking me anything about <span id="document-examples">these materials</span>!</p>
             </div>
             
-
-
             <button class="welcome-button" id="start-chatting">Start Chatting</button>
         </div>
     </div>
+
     
+
+    
+
+
     <!-- Document View Modal -->
     <div id="document-modal" class="document-modal">
         <div class="document-modal-content">
@@ -794,35 +807,33 @@
                                 .then(response => response.json())
                                 .then(docData => {
                                     const documents = docData.documents;
-                                    let documentText = '';
                                     let documentExamples = '';
                                     
                                     if (documents.length > 0) {
                                         if (documents.length === 1) {
-                                            documentText = `the ${documents[0].title}`;
                                             documentExamples = `${documents[0].title}`;
                                         } else if (documents.length === 2) {
-                                            documentText = `the ${documents[0].title} and ${documents[1].title}`;
                                             documentExamples = `${documents[0].title} or ${documents[1].title}`;
                                         } else if (documents.length === 3) {
-                                            documentText = `the ${documents[0].title}, ${documents[1].title}, and ${documents[2].title}`;
                                             documentExamples = `${documents[0].title}, ${documents[1].title}, or ${documents[2].title}`;
                                         } else {
-                                            documentText = `${documents.length} documents including ${documents[0].title}, ${documents[1].title}, and ${documents[2].title}`;
                                             documentExamples = `${documents[0].title}, ${documents[1].title}, or any of the other documents`;
                                         }
                                         
-                                        document.getElementById('document-names').textContent = documentText;
+                                        // Only update document-examples, not document-names
                                         document.getElementById('document-examples').textContent = documentExamples;
+                                    } else {
+                                        // No documents found
+                                        document.getElementById('document-examples').textContent = 'these materials';
                                     }
                                 })
                                 .catch(error => {
                                     console.error('Error fetching documents for welcome message:', error);
                                     // Use default text if can't fetch documents
-                                    document.getElementById('document-names').textContent = 'your business documents';
-                                    document.getElementById('document-examples').textContent = 'your materials';
+                                    document.getElementById('document-examples').textContent = 'these materials';
                                 });
-                            
+    
+    
                             // Show popup
                             const popup = document.getElementById('welcome-popup');
                             popup.style.display = 'block';

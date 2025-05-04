@@ -1,0 +1,16 @@
+rag_server/
+├── .env                      # Environment variables
+├── main.py                   # Entry point to run the application
+├── app.py                    # FastAPI application setup
+├── static/                   # Static files folder
+│   └── index.html            # Frontend UI
+├── data/                     # Data folder
+│   └── insurance_regulations.txt  # Your document
+├── db/                       # Database folder
+│   └── chroma_db/            # Chroma database files (created automatically)
+└── src/                      # Source code
+    ├── __init__.py           # Make src a package
+    ├── config.py             # Configuration settings
+    ├── models.py             # Pydantic models
+    ├── rag_engine.py         # RAG implementation
+    └── routes.py             # API routes

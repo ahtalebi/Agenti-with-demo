@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Demo Link Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .token-list, .stats-container {
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .revoke-btn {
+            background-color: #f44336;
+            padding: 5px 10px;
+        }
+        .revoke-btn:hover {
+            background-color: #d32f2f;
+        }
+        .copy-btn {
+            background-color: #2196F3;
+            padding: 5px 10px;
+            margin-left: 10px;
+        }
+        .copy-btn:hover {
+            background-color: #0b7dda;
+        }
+        .tab-container {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab-button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 17px;
+            color: #333;
+        }
+        .tab-button:hover {
+            background-color: #ddd;
+        }
+        .tab-button.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            background-color: white;
+        }
+        .stat-card {
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #777;
+        }
+        .flex-container {
+            display: flex;
+            gap: 20px;
+        }
+        .flex-item {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Panel</h1>
+
+    <div class="tab-container">
+        <button class="tab-button active" onclick="openTab(event, 'tokens')">Token Management</button>
+        <button class="tab-button" onclick="openTab(event, 'stats')">Usage Statistics</button>
+    </div>
+
+    <div id="tokens" class="tab-content" style="display: block;">
+        <div class="container">
+            <h2>Generate New Demo Link</h2>
+            <form id="generate-form">
+                <div class="form-group">
+                    <label for="customer-name">Customer Name:</label>
+                    <input type="text" id="customer-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required>
+                </div>
+                <button type="submit">Generate Link</button>
+            </form>
+
+            <div id="result" class="result" style="display: none;">
+                <h3>Generated Demo Link</h3>
+                <p id="demo-link"></p>
+                <button id="copy-link" class="copy-btn">Copy Link</button>
+            </div>
+        </div>
+
+        <div class="container token-list">
+            <h2>Existing Tokens</h2>
+            <table id="tokens-table">
+                <thead>
+                    <tr>
+                        <th>Token</th>
+                        <th>Customer</th>
+                        <th>Email</th>
+                        <th>Created</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tokens-list">
+                    <!-- Token list will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="stats" class="tab-content">
+        <div class="container stats-container">
+            <h2>Usage Statistics</h2>
+            
+            <div class="flex-container">
+                <div class="flex-item stat-card">
+                    <div class="stat-number" id="total-users">-</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="flex-item stat-card">
+                    <div class="stat-number" id="total-interactions">-</div>
+                    <div class="stat-label">Total Interactions</div>
+                </div>
+            </div>
+
+
+            
+            
+            <h3>User Activity</h3>
+            <table id="user-stats-table">
+                <thead>
+                    <tr>
+                        <th>Token</th>
+                        <th>Customer</th>
+                        <th>Email</th>
+                        <th>Interactions</th>
+                        <th>Last Activity</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="user-stats-list">
+                    <!-- User stats will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const generateForm = document.getElementById('generate-form');
+            const resultDiv = document.getElementById('result');
+            const demoLinkElement = document.getElementById('demo-link');
+            const copyLinkButton = document.getElementById('copy-link');
+            const tokensList = document.getElementById('tokens-list');
+            const userStatsList = document.getElementById('user-stats-list');
+            const totalUsersElement = document.getElementById('total-users');
+            const totalInteractionsElement = document.getElementById('total-interactions');
+
+            // Function to load all tokens
+            // Function to load all tokens with simplified date format
+            async function loadTokens() {
+                try {
+                    const response = await fetch('/api/token/list');
+                    
+                    // Check if unauthorized (will be redirected to login)
+                    if (response.status === 401) {
+                        return;
+                    }
+                    
+                    const tokens = await response.json();
+                    
+                    tokensList.innerHTML = '';
+                    tokens.forEach(token => {
+                        const row = document.createElement('tr');
+                        
+                        const tokenCell = document.createElement('td');
+                        tokenCell.textContent = token.token.substring(0, 8) + '...';
+                        
+                        const customerCell = document.createElement('td');
+                        customerCell.textContent = token.customer_name;
+                        
+                        const emailCell = document.createElement('td');
+                        emailCell.textContent = token.email;
+                        
+                        const createdCell = document.createElement('td');
+                        // Format date to remove seconds (only show date and hour:minute)
+                        const createdDate = new Date(token.created_at);
+                        const formattedDate = createdDate.toLocaleDateString() + ' ' + 
+                                            createdDate.getHours().toString().padStart(2, '0') + ':' + 
+                                            createdDate.getMinutes().toString().padStart(2, '0');
+                        createdCell.textContent = formattedDate;
+                        
+                        const statusCell = document.createElement('td');
+                        statusCell.textContent = token.status;
+                        
+                        const actionsCell = document.createElement('td');
+                        
+                        if (token.status === 'active') {
+                            const revokeButton = document.createElement('button');
+                            revokeButton.textContent = 'Revoke';
+                            revokeButton.className = 'revoke-btn';
+                            revokeButton.addEventListener('click', () => revokeToken(token.token));
+                            actionsCell.appendChild(revokeButton);
+                        }
+                        
+                        row.appendChild(tokenCell);
+                        row.appendChild(customerCell);
+                        row.appendChild(emailCell);
+                        row.appendChild(createdCell);
+                        row.appendChild(statusCell);
+                        row.appendChild(actionsCell);
+                        
+                        tokensList.appendChild(row);
+                    });
+                } catch (error) {
+                    console.error('Error loading tokens:', error);
+                }
+            }
+            
+            // Function to load interaction statistics
+            // Enhanced loadStats function with better debugging and token matching
+            async function loadStats() {
+                try {
+                    // First, get all tokens to access customer name and email
+                    const tokensResponse = await fetch('/api/token/list');
+                    if (tokensResponse.status === 401) return;
+                    const tokens = await tokensResponse.json();
+
+                    console.log("Tokens from API:", tokens);
+                    
+                    // Create a map of token -> {customer_name, email} for quick lookup
+                    // Include both full token and shortened version for more reliable matching
+                    const tokenMap = {};
+                    tokens.forEach(token => {
+                        const fullToken = token.token;
+                        const shortToken = fullToken.substring(0, 8) + '...';
+                        
+                        const userInfo = {
+                            customer_name: token.customer_name,
+                            email: token.email
+                        };
+                        
+                        tokenMap[fullToken] = userInfo;
+                        tokenMap[shortToken] = userInfo;  // Add shortened version too
+                    });
+                    
+                    console.log("Token Map:", tokenMap);
+                    
+                    // Get the stats data
+                    const statsResponse = await fetch('/api/interactions/stats');
+                    if (statsResponse.status === 401) return;
+                    const data = await statsResponse.json();
+                    
+                    console.log("Users from stats:", data.users);
+                    
+                    // Update summary stats
+                    totalUsersElement.textContent = data.total_users;
+                    totalInteractionsElement.textContent = data.total_interactions;
+                    
+                    // Update user stats table
+                    userStatsList.innerHTML = '';
+                    data.users.forEach(user => {
+                        const row = document.createElement('tr');
+                        
+                        // Get the token (may be full or shortened)
+                        const userToken = user.token;
+                        console.log("Processing token:", userToken);
+                        
+                        // Try to find a match for this token
+                        let userInfo = tokenMap[userToken];
+                        
+                        // If not found and token appears to be full length, try with shortened version
+                        if (!userInfo && userToken.length > 10) {
+                            const shortVersion = userToken.substring(0, 8) + '...';
+                            userInfo = tokenMap[shortVersion];
+                            console.log("Trying with shortened version:", shortVersion);
+                        }
+                        
+                        // If not found and token appears to be shortened, try to match against full tokens
+                        if (!userInfo && userToken.includes('...')) {
+                            const tokenPrefix = userToken.split('...')[0];
+                            console.log("Trying to match prefix:", tokenPrefix);
+                            
+                            // Look for any full token that starts with this prefix
+                            const matchingToken = tokens.find(t => t.token.startsWith(tokenPrefix));
+                            if (matchingToken) {
+                                userInfo = {
+                                    customer_name: matchingToken.customer_name,
+                                    email: matchingToken.email
+                                };
+                                console.log("Found match by prefix:", matchingToken.token);
+                            }
+                        }
+                        
+                        // Default to Unknown if still not found
+                        if (!userInfo) {
+                            userInfo = { customer_name: 'Unknown', email: 'Unknown' };
+                            console.log("No match found, using Unknown");
+                        }
+                        
+                        const tokenCell = document.createElement('td');
+                        tokenCell.textContent = userToken;
+                        
+                        // Add customer name cell
+                        const nameCell = document.createElement('td');
+                        nameCell.textContent = userInfo.customer_name;
+                        
+                        // Add email cell
+                        const emailCell = document.createElement('td');
+                        emailCell.textContent = userInfo.email;
+                        
+                        const countCell = document.createElement('td');
+                        countCell.textContent = user.interaction_count;
+                        
+                        const lastActivityCell = document.createElement('td');
+                        lastActivityCell.textContent = user.last_activity ? 
+                            new Date(user.last_activity).toLocaleString().split(', ')[0] : 'Never';
+                        
+                        // const actionsCell = document.createElement('td');
+                        // const viewButton = document.createElement('button');
+                        // viewButton.textContent = 'View Details';
+                        // viewButton.className = 'copy-btn';
+                        // viewButton.addEventListener('click', () => viewUserDetails(user.token));
+                        // actionsCell.appendChild(viewButton);
+
+
+                        const actionsCell = document.createElement('td');
+                        actionsCell.textContent = '—'; // Just a dash to indicate no action available
+
+                        
+                        row.appendChild(tokenCell);
+                        row.appendChild(nameCell);
+                        row.appendChild(emailCell);
+                        row.appendChild(countCell);
+                        row.appendChild(lastActivityCell);
+                        row.appendChild(actionsCell);
+                        
+                        userStatsList.appendChild(row);
+                    });
+                } catch (error) {
+                    console.error('Error loading stats:', error);
+                }
+            }
+            // Function to view user interaction details
+            // 3. Comment Out "View Details" Functionality
+            // Replace the viewUserDetails function with this:
+            function viewUserDetails(token) {
+                // Commented out for now - not functional
+                // alert('View details for token: ' + token + '\nThis would display the full conversation history.');
+                console.log('View details clicked for token:', token);
+            }
+
+            // Function to revoke a token
+            async function revokeToken(token) {
+                try {
+                    const formData = new FormData();
+                    formData.append('token', token);
+                    
+                    const response = await fetch('/api/token/revoke', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (response.ok) {
+                        alert('Token revoked successfully');
+                        loadTokens();
+                    } else {
+                        const data = await response.json();
+                        alert('Error: ' + data.detail);
+                    }
+                } catch (error) {
+                    console.error('Error revoking token:', error);
+                    alert('Error revoking token');
+                }
+            }
+
+            // Handle form submission
+            generateForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const customerName = document.getElementById('customer-name').value;
+                const email = document.getElementById('email').value;
+                
+                const formData = new FormData();
+                formData.append('customer_name', customerName);
+                formData.append('email', email);
+                
+                try {
+                    const response = await fetch('/api/token/create', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    demoLinkElement.textContent = data.url;
+                    resultDiv.style.display = 'block';
+                    
+                    // Reload the token list
+                    loadTokens();
+                    
+                    // Reset the form
+                    generateForm.reset();
+                } catch (error) {
+                    console.error('Error generating token:', error);
+                    alert('Error generating token');
+                }
+            });
+
+            // Handle copy button
+            copyLinkButton.addEventListener('click', function() {
+                const demoLink = demoLinkElement.textContent;
+                
+                // Use the modern navigator.clipboard API
+                navigator.clipboard.writeText(demoLink)
+                    .then(() => {
+                        // Show success message
+                        const originalText = copyLinkButton.textContent;
+                        copyLinkButton.textContent = 'Copied!';
+                        
+                        // Reset button text after 2 seconds
+                        setTimeout(() => {
+                            copyLinkButton.textContent = originalText;
+                        }, 2000);
+                    })
+                    .catch(err => {
+                        console.error('Failed to copy link:', err);
+                        alert('Failed to copy link. Please try selecting and copying manually.');
+                    });
+            });
+
+            // Tab switching function
+            window.openTab = function(evt, tabName) {
+                var i, tabcontent, tabbuttons;
+                
+                // Hide all tab content
+                tabcontent = document.getElementsByClassName("tab-content");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                
+                // Remove active class from all tab buttons
+                tabbuttons = document.getElementsByClassName("tab-button");
+                for (i = 0; i < tabbuttons.length; i++) {
+                    tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
+                }
+                
+                // Show the current tab and add active class to the button
+                document.getElementById(tabName).style.display = "block";
+                evt.currentTarget.className += " active";
+                
+                // Load data for the selected tab
+                if (tabName === 'stats') {
+                    loadStats();
+                }
+            };
+
+            // Load tokens on page load
+            loadTokens();
+        });
+    </script>
+</body>
+</html>

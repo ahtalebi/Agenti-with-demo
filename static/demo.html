@@ -750,13 +750,26 @@
                     
                     popupDiv.innerHTML = `
                         <div class="popup-content">
-                            <h2 class="welcome-title">Interaction Limit Reached</h2>
+                            <h2 class="welcome-title">Thank you!</h2>
                             <div class="welcome-highlight">
-                                <p>You have reached the maximum number of interactions (4) for this demo.</p>
-                                <p>Please contact us to learn more about our premium plans with unlimited interactions.</p>
+                                <p>Thank you for trying our AI Assistant demo. We hope you enjoyed using our product. For further information or to continue using the service, please contact us.</p>
+                                
+                                <div style="text-align: left; margin: 20px 0;">
+                                    <p style="margin: 8px 0;">
+                                        <i class="fas fa-envelope" style="margin-right: 8px; color: var(--primary-color);"></i>
+                                        <strong>info@finitx.com</strong>
+                                    </p>
+                                    <p style="margin: 8px 0;">
+                                        <i class="fas fa-phone" style="margin-right: 8px; color: var(--primary-color);"></i>
+                                        <strong>+971 502 87 6960</strong>
+                                    </p>
+                                </div>
+                                
+                                <p>We look forward to serving you!</p>
                             </div>
+                            
                             <a href="https://www.finitx.com/contact-us/" class="welcome-button" style="text-decoration: none; display: inline-block; margin-top: 20px;" target="_blank">
-                                Contact Sales
+                                Contact Us
                             </a>
                         </div>
                     `;
@@ -767,8 +780,8 @@
                     questionInput.disabled = true;
                     askButton.disabled = true;
                     
-                    // Add a message to the chat (now accessible since it's in the same scope)
-                    addMessage("You've reached the maximum number of interactions for this demo. Please contact our sales team for a full version with unlimited interactions.", false);
+                    // Add a message to the chat
+                    addMessage("Thank you for using our AI Assistant demo. Please contact us for further information.", false);
                 }
             }
                         

@@ -1,12 +1,25 @@
-fastapi>=0.103.1
-uvicorn>=0.23.2
-python-dotenv>=1.0.0
-langchain>=0.0.267
-langchain-openai>=0.0.2
-langchain-community>=0.0.10
-langchain-chroma>=0.0.10
-chromadb>=0.4.13
-python-multipart>=0.0.6
-pydantic>=2.4.2
-pypdf>=3.15.1
-docx2txt>=0.8
+# Core FastAPI and server
+fastapi==0.103.1
+uvicorn==0.23.2
+python-dotenv==1.0.0
+
+# LangChain and AI (no version pinning)
+langchain
+langchain-community  
+langchain-openai
+chromadb==0.4.13
+
+# Document processing
+numpy==1.26.0
+pandas==2.0.3
+PyPDF2==3.0.1
+openpyxl==3.1.2
+python-docx==1.1.0
+xlrd==2.0.1
+chardet==5.2.0
+
+# Web and data
+python-multipart==0.0.6
+pydantic==2.4.2
+aiofiles==23.2.1
+Pillow==10.1.0

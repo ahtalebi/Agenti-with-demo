@@ -20,7 +20,7 @@ if __name__ == "__main__":
     
     print(f"\nStarting server on {HOST}:{PORT}")
     print(f"Access the API documentation at {BASE_URL}/docs")
-    print(f"Access the admin panel at {BASE_URL}/admin.html")
+    print(f"Access the admin panel at {BASE_URL}/admin")
     
     # Run the server
     uvicorn.run("app:app", host=HOST, port=PORT, reload=True)

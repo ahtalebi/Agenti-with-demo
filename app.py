@@ -54,7 +54,6 @@ async def validate_token_middleware(request: Request, call_next):
         "/openapi.json",              # OpenAPI schema
         "/static/",                   # Static files
         "/access-denied.html",        # Access denied page
-        "/"                           # Index page
     ]
     
     # Check if path should skip authentication

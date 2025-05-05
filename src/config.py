@@ -27,3 +27,6 @@ CHUNK_OVERLAP = 50
 # OpenAI Base URL - Add this new configuration
 OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")  # Default to standard OpenAI endpoint
 
+BASE_URL = os.getenv("BASE_URL", "https://chatbot.finitx.com")
+print(f"[DEBUG] Config: BASE_URL = {BASE_URL}")
+

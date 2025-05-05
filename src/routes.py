@@ -49,6 +49,9 @@ async def health_check():
     """Health check endpoint to verify the API is running."""
     return {"status": "ok"}
 
+
+
+
 # Token management endpoints - now with admin authentication
 @admin_router.post("/create", response_model=TokenResponse)
 async def generate_token(
@@ -58,10 +61,23 @@ async def generate_token(
 ):
     """Generate a new access token. Requires admin authentication."""
     token_data = create_token(customer_name, email)
-    # Get base URL from a config or environment variable
-    base_url = "http://localhost:8000"  # Change this to your actual domain
+    
+    # Debug: Print the configuration
+    print(f"[DEBUG] Importing config...")
+    from . import config
+    print(f"[DEBUG] Config BASE_URL: {config.BASE_URL}")
+    print(f"[DEBUG] Environment BASE_URL: {os.getenv('BASE_URL')}")
+    
+    base_url = config.BASE_URL
+    print(f"[DEBUG] Using base_url: {base_url}")
+    
     token_data["url"] = f"{base_url}/demo?token={token_data['token']}"
+    print(f"[DEBUG] Generated URL: {token_data['url']}")
+    
     return token_data
+
+
+
 
 @admin_router.post("/revoke")
 async def revoke_token_endpoint(

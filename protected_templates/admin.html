@@ -245,6 +245,14 @@
             const totalUsersElement = document.getElementById('total-users');
             const totalInteractionsElement = document.getElementById('total-interactions');
 
+
+            // Add these checks
+            console.log('Generate form:', generateForm);
+            console.log('Result div:', resultDiv);
+            console.log('Demo link element:', demoLinkElement);
+            console.log('Copy link button:', copyLinkButton);
+
+
             // Function to load all tokens
             // Function to load all tokens with simplified date format
             async function loadTokens() {
@@ -481,6 +489,11 @@
                     });
                     
                     const data = await response.json();
+
+
+                    console.log('Received response:', data);
+                    console.log('URL to copy:', data.url);
+
                     
                     demoLinkElement.textContent = data.url;
                     resultDiv.style.display = 'block';
@@ -496,27 +509,71 @@
                 }
             });
 
+
+
+
+            // Handle copy button
             // Handle copy button
             copyLinkButton.addEventListener('click', function() {
                 const demoLink = demoLinkElement.textContent;
                 
-                // Use the modern navigator.clipboard API
-                navigator.clipboard.writeText(demoLink)
-                    .then(() => {
-                        // Show success message
-                        const originalText = copyLinkButton.textContent;
-                        copyLinkButton.textContent = 'Copied!';
-                        
-                        // Reset button text after 2 seconds
-                        setTimeout(() => {
-                            copyLinkButton.textContent = originalText;
-                        }, 2000);
-                    })
-                    .catch(err => {
-                        console.error('Failed to copy link:', err);
-                        alert('Failed to copy link. Please try selecting and copying manually.');
-                    });
+                if (!demoLink || demoLink.trim() === '') {
+                    alert('No link to copy. Please generate a link first.');
+                    return;
+                }
+                
+                // Try modern clipboard API first
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(demoLink)
+                        .then(() => {
+                            const originalText = copyLinkButton.textContent;
+                            copyLinkButton.textContent = 'Copied!';
+                            setTimeout(() => {
+                                copyLinkButton.textContent = originalText;
+                            }, 2000);
+                        })
+                        .catch(err => {
+                            console.error('Clipboard API failed:', err);
+                            fallbackCopy();
+                        });
+                } else {
+                    // Use fallback method
+                    fallbackCopy();
+                }
+                
+                // Fallback copy method
+                function fallbackCopy() {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = demoLink;
+                    textArea.style.position = "fixed";
+                    textArea.style.left = "-999999px";
+                    textArea.style.top = "-999999px";
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    
+                    try {
+                        const successful = document.execCommand('copy');
+                        if (successful) {
+                            const originalText = copyLinkButton.textContent;
+                            copyLinkButton.textContent = 'Copied!';
+                            setTimeout(() => {
+                                copyLinkButton.textContent = originalText;
+                            }, 2000);
+                        } else {
+                            alert('Failed to copy link. Please copy manually.');
+                        }
+                    } catch (err) {
+                        console.error('Fallback copy failed:', err);
+                        alert('Failed to copy link. Please copy manually.');
+                    } finally {
+                        document.body.removeChild(textArea);
+                    }
+                }
             });
+
+
+
 
             // Tab switching function
             window.openTab = function(evt, tabName) {

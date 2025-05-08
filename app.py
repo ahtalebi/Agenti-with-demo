@@ -50,10 +50,12 @@ async def validate_token_middleware(request: Request, call_next):
         "/admin",                     # Admin entry point (will be authenticated by its route handler)
         "/api/token/",                # Token management APIs (already have auth in routes)
         "/api/interactions/",         # Interaction statistics APIs (already have auth in routes)
-        "/docs",                      # API docs
+       # "/docs",                      # API docs
         "/openapi.json",              # OpenAPI schema
         "/static/",                   # Static files
         "/access-denied.html",        # Access denied page
+        "/api/health",
+
     ]
     
     # Check if path should skip authentication

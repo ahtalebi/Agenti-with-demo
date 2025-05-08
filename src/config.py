@@ -15,7 +15,7 @@ MODEL_NAME = os.getenv("MODEL_NAME", "gpt-3.5-turbo")
 TEMPERATURE = float(os.getenv("TEMPERATURE", 0.7))
 
 # Document Settings
-DOCUMENT_PATH = os.getenv("DOCUMENT_PATH", "data/insurance_regulations.txt")
+DOCUMENT_PATH = os.getenv("DOCUMENT_PATH", "data/")
 
 # Database Settings
 DB_PATH = os.getenv("DB_PATH", "db/chroma_db")

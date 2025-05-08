@@ -11,7 +11,7 @@ def get_admin_credentials():
     """Get admin credentials from environment or use defaults."""
     return {
         "username": os.getenv("ADMIN_USERNAME", "admin"),
-        "password": os.getenv("ADMIN_PASSWORD", "changeme")
+        "password": os.getenv("ADMIN_PASSWORD", "!yZu2pYGP6%h#r*H")
     }
 
 def verify_admin(credentials: HTTPBasicCredentials = Depends(security)):

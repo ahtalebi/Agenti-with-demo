@@ -1,25 +1,19 @@
-# Python version
-# python_requires>=3.8,<3.12.4
-# The application has been tested with Python 3.12.3
-
-
-
 # Core application
 fastapi==0.103.1
 uvicorn==0.23.2
 python-dotenv==1.0.0
 python-multipart==0.0.6
 
-# RAG system - without version constraints for better compatibility
-langchain>=0.0.350
-langchain-community>=0.0.1
-langchain-openai>=0.0.2
-chromadb>=0.4.13
+# RAG system - updated to newer versions with better Python 3.12 support
+langchain==0.3.25  # Much newer version with better Python 3.12 support
+langchain-community==0.3.7  # Compatible with langchain 0.3.x
+langchain-openai==0.3.16   # Compatible with langchain 0.3.x
+chromadb==0.6.3  # Version that has pre-built wheels
 
 # Document processing - essentials
 PyPDF2==3.0.1
 numpy==1.26.0
-pandas==2.0.3
+pandas==2.2.0  # Updated to a version with Python 3.12 wheels available
 
 # Document processing - additional formats
 python-docx==1.1.0

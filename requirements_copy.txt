@@ -1,0 +1,26 @@
+# Python version
+# python_requires>=3.8,<3.12.4
+# The application has been tested with Python 3.12.3
+
+
+
+# Core application
+fastapi==0.103.1
+uvicorn==0.23.2
+python-dotenv==1.0.0
+python-multipart==0.0.6
+
+# RAG system - without version constraints for better compatibility
+langchain>=0.0.350
+langchain-community>=0.0.1
+langchain-openai>=0.0.2
+chromadb>=0.4.13
+
+# Document processing - essentials
+PyPDF2==3.0.1
+numpy==1.26.0
+pandas==2.0.3
+
+# Document processing - additional formats
+python-docx==1.1.0
+openpyxl==3.1.2

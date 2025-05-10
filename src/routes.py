@@ -226,7 +226,9 @@ async def get_documents():
             file_id = os.path.splitext(file_name)[0].lower().replace(" ", "-").replace("_", "-")
             
             # Create a title from filename (replace underscores with spaces, capitalize)
-            title = os.path.splitext(file_name)[0].replace("_", " ").title()
+            # title = os.path.splitext(file_name)[0].replace("_", " ").title()
+            # Create a title from filename (replace underscores with spaces)    
+            title = os.path.splitext(file_name)[0].replace("_", " ")
             
             # Generate a simple description based on the title
             # description = f"{title} document for reference."
